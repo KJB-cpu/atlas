@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { JointId, Muscle, RegionId } from '../types';
 import { MUSCLES } from '../data';
-import { JOINT_LABELS, JOINT_ORDER, REGIONS } from '../data/vocab';
+import { JOINT_LABELS, JOINT_ORDER, REGIONS, rootRank } from '../data/vocab';
 import { baseNerve, EMPTY_FILTERS, facetOptions, type Filters } from '../lib/search';
 import { noteIds } from '../lib/notes';
 
@@ -203,7 +203,9 @@ export function Sidebar({ filters, onFilters, results, selectedId, onSelect, sho
                 </span>
                 <span className="list-meta">
                   {baseNerve(m.innervation[0].nerve)} ·{' '}
-                  {[...new Set(m.innervation.flatMap((n) => n.roots))].join(', ')}
+                  {[...new Set(m.innervation.flatMap((n) => n.roots))]
+                    .sort((a, b) => rootRank(a) - rootRank(b))
+                    .join(', ')}
                 </span>
               </button>
             ))}

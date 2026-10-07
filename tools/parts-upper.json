@@ -1,0 +1,358 @@
+{
+  "_comment": "BodyParts3D FMA ID 매핑 (right side + 체간 골격). muscles 키는 src/data의 muscle id와 일치해야 함.",
+  "name": "upper",
+  "muscles": {
+    "trapezius-upper": [
+      "FMA33586"
+    ],
+    "trapezius-middle": [
+      "FMA33584"
+    ],
+    "trapezius-lower": [
+      "FMA33581"
+    ],
+    "levator-scapulae": [
+      "FMA32540"
+    ],
+    "rhomboid-major": [
+      "FMA13381"
+    ],
+    "rhomboid-minor": [
+      "FMA13383"
+    ],
+    "serratus-anterior": [
+      "FMA13398"
+    ],
+    "pectoralis-minor": [
+      "FMA13375"
+    ],
+    "subclavius": [
+      "FMA13412"
+    ],
+    "pectoralis-major-clavicular": [
+      "FMA34690"
+    ],
+    "pectoralis-major-sternocostal": [
+      "FMA79979",
+      "FMA45874"
+    ],
+    "latissimus-dorsi": [
+      "FMA13358"
+    ],
+    "deltoid-anterior": [
+      "FMA34680"
+    ],
+    "deltoid-middle": [
+      "FMA34682"
+    ],
+    "deltoid-posterior": [
+      "FMA34684"
+    ],
+    "supraspinatus": [
+      "FMA32544"
+    ],
+    "infraspinatus": [
+      "FMA32547"
+    ],
+    "teres-minor": [
+      "FMA32553"
+    ],
+    "subscapularis": [
+      "FMA13414"
+    ],
+    "teres-major": [
+      "FMA32551"
+    ],
+    "coracobrachialis": [
+      "FMA37665"
+    ],
+    "biceps-brachii": [
+      "FMA37684",
+      "FMA37686"
+    ],
+    "brachialis": [
+      "FMA37668"
+    ],
+    "triceps-brachii": [
+      "FMA37695",
+      "FMA37697",
+      "FMA37699"
+    ],
+    "anconeus": [
+      "FMA37705"
+    ],
+    "pronator-teres": [
+      "FMA38560",
+      "FMA38562"
+    ],
+    "flexor-carpi-radialis": [
+      "FMA38460"
+    ],
+    "palmaris-longus": [
+      "FMA38463"
+    ],
+    "flexor-carpi-ulnaris": [
+      "FMA38617",
+      "FMA38619"
+    ],
+    "flexor-digitorum-superficialis": [
+      "FMA38638",
+      "FMA38640"
+    ],
+    "flexor-digitorum-profundus": [
+      "FMA38479"
+    ],
+    "flexor-pollicis-longus": [
+      "FMA38482"
+    ],
+    "pronator-quadratus": [
+      "FMA38454"
+    ],
+    "brachioradialis": [
+      "FMA38486"
+    ],
+    "extensor-carpi-radialis-longus": [
+      "FMA38495"
+    ],
+    "extensor-carpi-radialis-brevis": [
+      "FMA38498"
+    ],
+    "extensor-digitorum": [
+      "FMA38501"
+    ],
+    "extensor-digiti-minimi": [
+      "FMA38504"
+    ],
+    "extensor-carpi-ulnaris": [
+      "BP45",
+      "BP47"
+    ],
+    "supinator": [
+      "FMA38513"
+    ],
+    "abductor-pollicis-longus": [
+      "FMA38516"
+    ],
+    "extensor-pollicis-brevis": [
+      "FMA38519"
+    ],
+    "extensor-pollicis-longus": [
+      "FMA38522"
+    ],
+    "extensor-indicis": [
+      "FMA38525"
+    ],
+    "abductor-pollicis-brevis": [
+      "FMA37386"
+    ],
+    "flexor-pollicis-brevis": [
+      "FMA65198",
+      "FMA46110"
+    ],
+    "opponens-pollicis": [
+      "FMA37390"
+    ],
+    "adductor-pollicis": [
+      "FMA46121",
+      "FMA46123"
+    ],
+    "abductor-digiti-minimi-hand": [
+      "FMA37396"
+    ],
+    "flexor-digiti-minimi-brevis-hand": [
+      "FMA37398"
+    ],
+    "opponens-digiti-minimi": [
+      "FMA37400"
+    ],
+    "lumbricals-hand": [
+      "FMA42398"
+    ],
+    "palmar-interossei": [
+      "FMA42402"
+    ],
+    "dorsal-interossei-hand": [
+      "FMA42404"
+    ]
+  },
+  "bones": {
+    "Occipital bone": [
+      "FMA52735"
+    ],
+    "C1 (atlas)": [
+      "FMA12519"
+    ],
+    "C2 (axis)": [
+      "FMA12520"
+    ],
+    "C3": [
+      "FMA12521"
+    ],
+    "C4": [
+      "FMA12522"
+    ],
+    "C5": [
+      "FMA12523"
+    ],
+    "C6": [
+      "FMA12524"
+    ],
+    "C7": [
+      "FMA12525"
+    ],
+    "T1": [
+      "FMA9165"
+    ],
+    "T2": [
+      "FMA9187"
+    ],
+    "T3": [
+      "FMA9209"
+    ],
+    "T4": [
+      "FMA9248"
+    ],
+    "T5": [
+      "FMA9922"
+    ],
+    "T6": [
+      "FMA9945"
+    ],
+    "T7": [
+      "FMA9968"
+    ],
+    "T8": [
+      "FMA9991"
+    ],
+    "T9": [
+      "FMA10014"
+    ],
+    "T10": [
+      "FMA10037"
+    ],
+    "T11": [
+      "FMA10059"
+    ],
+    "T12": [
+      "FMA10081"
+    ],
+    "Sternum": [
+      "FMA7486",
+      "FMA7487",
+      "FMA7488"
+    ],
+    "Rib 1": [
+      "FMA7857"
+    ],
+    "Rib 2": [
+      "FMA7882"
+    ],
+    "Rib 3": [
+      "FMA7909"
+    ],
+    "Rib 4": [
+      "FMA7957"
+    ],
+    "Rib 5": [
+      "FMA8066"
+    ],
+    "Rib 6": [
+      "FMA8175"
+    ],
+    "Rib 7": [
+      "FMA8229"
+    ],
+    "Rib 8": [
+      "FMA8283"
+    ],
+    "Rib 9": [
+      "FMA8364"
+    ],
+    "Rib 10": [
+      "FMA8445"
+    ],
+    "Rib 11": [
+      "FMA8531"
+    ],
+    "Rib 12": [
+      "FMA8533"
+    ],
+    "Costal cartilages": [
+      "FMA7875",
+      "FMA7886",
+      "FMA7913",
+      "FMA7976",
+      "FMA8070",
+      "FMA8194",
+      "FMA8248",
+      "BP28"
+    ],
+    "Clavicle": [
+      "FMA13322"
+    ],
+    "Scapula": [
+      "FMA13395"
+    ],
+    "Humerus": [
+      "FMA23130"
+    ],
+    "Radius": [
+      "FMA23464"
+    ],
+    "Ulna": [
+      "FMA23467"
+    ],
+    "Scaphoid": [
+      "FMA24435"
+    ],
+    "Lunate": [
+      "FMA24437"
+    ],
+    "Triquetrum": [
+      "FMA24439"
+    ],
+    "Pisiform": [
+      "FMA24441"
+    ],
+    "Trapezium": [
+      "FMA24443"
+    ],
+    "Trapezoid": [
+      "FMA23725"
+    ],
+    "Capitate": [
+      "FMA24446"
+    ],
+    "Hamate": [
+      "FMA24448"
+    ],
+    "Metacarpals": [
+      "FMA24464",
+      "FMA24466",
+      "FMA24468",
+      "FMA24470",
+      "FMA24472"
+    ],
+    "Phalanges of hand": [
+      "FMA24450",
+      "FMA24451",
+      "FMA24452",
+      "FMA24453",
+      "FMA24454",
+      "FMA24455",
+      "FMA24456",
+      "FMA24457",
+      "FMA24458",
+      "FMA24459",
+      "FMA24460",
+      "FMA24461",
+      "FMA24462",
+      "FMA24463"
+    ]
+  },
+  "connective": {
+    "Interosseous membrane (forearm)": [
+      "FMA23707"
+    ]
+  }
+}

@@ -78,6 +78,8 @@ export class AnatomyViewer {
   private resizeObs: ResizeObserver;
   private modelCenter = new THREE.Vector3();
   private modelSize = new THREE.Vector3(1, 1, 1);
+  private modelBox = new THREE.Box3();
+  private regions = new Map<string, THREE.Box3>();
   private disposed = false;
 
   constructor(private container: HTMLElement) {
@@ -118,14 +120,34 @@ export class AnatomyViewer {
     this.resize();
   }
 
-  async load(url: string): Promise<void> {
+  /** 여러 부위 모델(같은 BodyParts3D 좌표계)을 한 장면에 불러옴. key = region 이름 */
+  async load(models: Record<string, string>): Promise<void> {
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
-    const gltf = await loader.loadAsync(url);
+    const loaded = await Promise.all(
+      Object.entries(models).map(async ([region, url]) => [region, await loader.loadAsync(url)] as const),
+    );
     if (this.disposed) return;
+    for (const [region, gltf] of loaded) {
+      const box = this.addModel(gltf.scene);
+      this.regions.set(region, box);
+      this.modelBox.union(box);
+    }
 
+    this.modelBox.getCenter(this.modelCenter);
+    this.modelBox.getSize(this.modelSize);
+    this.controls.target.copy(this.modelCenter);
+    this.camera.position.copy(this.modelCenter).addScaledVector(VIEW_DIR.anterior, this.distanceForSize(this.modelSize));
+    const r = this.modelSize.length() / 2;
+    this.controls.minDistance = r * 0.06;
+    this.controls.maxDistance = r * 5;
+    if (this.state) this.applyState(this.state);
+    this.requestRender();
+  }
+
+  private addModel(root: THREE.Object3D): THREE.Box3 {
     const box = new THREE.Box3();
-    gltf.scene.traverse((obj) => {
+    root.traverse((obj) => {
       if (!(obj instanceof THREE.Mesh)) return;
       const [kind, name] = obj.name.split('__') as [PartKind, string];
       if (!name) return;
@@ -152,23 +174,8 @@ export class AnatomyViewer {
       });
       box.expandByObject(obj);
     });
-    this.scene.add(gltf.scene);
-
-    box.getCenter(this.modelCenter);
-    box.getSize(this.modelSize);
-    this.controls.target.copy(this.modelCenter);
-    this.camera.position.copy(this.modelCenter).addScaledVector(VIEW_DIR.anterior, this.modelDistance());
-    const r = this.modelSize.length() / 2;
-    this.controls.minDistance = r * 0.12;
-    this.controls.maxDistance = r * 6;
-    if (this.state) this.applyState(this.state);
-    this.requestRender();
-  }
-
-  muscleIds(): Set<string> {
-    const s = new Set<string>();
-    for (const p of this.parts.values()) if (p.kind === 'muscles') s.add(p.name);
-    return s;
+    this.scene.add(root);
+    return box;
   }
 
   applyState(s: DisplayState): void {
@@ -209,7 +216,9 @@ export class AnatomyViewer {
   focus(muscleId: string | null): void {
     const part = muscleId ? this.parts.get(`muscles:${muscleId}`) : null;
     const target = part ? part.center : this.modelCenter;
-    const dist = part ? Math.max(this.fitDistance(part.radius) * 1.7, this.controls.minDistance * 1.2) : this.modelDistance();
+    const dist = part
+      ? Math.max(this.fitDistance(part.radius) * 1.7, this.controls.minDistance * 1.2)
+      : this.distanceForSize(this.modelSize);
     const dir = this.camera.position.clone().sub(this.controls.target).normalize();
     this.animateTo(target, target.clone().addScaledVector(dir, dist));
   }
@@ -220,9 +229,13 @@ export class AnatomyViewer {
     this.animateTo(t, t.clone().addScaledVector(VIEW_DIR[view], dist));
   }
 
-  resetView(): void {
-    const c = this.modelCenter.clone();
-    this.animateTo(c, c.clone().addScaledVector(VIEW_DIR.anterior, this.modelDistance()));
+  /** 부위(region) 전체가 보이도록 anterior view로 이동. null이면 전체 */
+  frameRegion(region: string | null): void {
+    const box = region ? this.regions.get(region) : this.modelBox;
+    if (!box || box.isEmpty()) return;
+    const c = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    this.animateTo(c, c.clone().addScaledVector(VIEW_DIR.anterior, this.distanceForSize(size)));
   }
 
   dispose(): void {
@@ -246,11 +259,11 @@ export class AnatomyViewer {
     return (radius / Math.sin(fovMin / 2)) * 1.02;
   }
 
-  /** 모델 전체가 화면 높이/너비에 들어오는 거리 (세로로 긴 하지 모델 기준) */
-  private modelDistance(): number {
-    const half = Math.max(this.modelSize.y / 2, Math.max(this.modelSize.x, this.modelSize.z) / 2 / this.camera.aspect);
+  /** 주어진 크기의 박스가 화면 높이/너비에 들어오는 카메라 거리 (anterior view 기준) */
+  private distanceForSize(size: THREE.Vector3): number {
+    const half = Math.max(size.y / 2, size.x / 2 / this.camera.aspect);
     const fov = (this.camera.fov * Math.PI) / 180;
-    return (half / Math.tan(fov / 2)) * 1.12 + Math.max(this.modelSize.x, this.modelSize.z) / 2;
+    return (half / Math.tan(fov / 2)) * 1.1 + size.z / 2;
   }
 
   private animateTo(target: THREE.Vector3, cam: THREE.Vector3): void {

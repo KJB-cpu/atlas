@@ -3,15 +3,18 @@ import { REGIONS } from '../data/vocab';
 import type { Filters } from '../lib/search';
 
 const QUICK: { label: string; patch: Partial<Filters> }[] = [
+  { label: 'Scapular upward rotation', patch: { joint: 'scapula', motion: 'upward rotation' } },
+  { label: 'Shoulder lateral rotation', patch: { joint: 'shoulder', motion: 'lateral rotation' } },
+  { label: 'Forearm supination', patch: { joint: 'forearm', motion: 'supination' } },
+  { label: 'Wrist extension', patch: { joint: 'wrist', motion: 'extension' } },
   { label: 'Hip abduction', patch: { joint: 'hip', motion: 'abduction' } },
-  { label: 'Hip lateral rotation', patch: { joint: 'hip', motion: 'lateral rotation' } },
   { label: 'Knee flexion', patch: { joint: 'knee', motion: 'flexion' } },
   { label: 'Ankle dorsiflexion', patch: { joint: 'ankle', motion: 'dorsiflexion' } },
-  { label: 'Foot inversion', patch: { joint: 'foot', motion: 'inversion' } },
+  { label: 'Radial nerve', patch: { nerve: 'Radial nerve' } },
+  { label: 'Ulnar nerve', patch: { nerve: 'Ulnar nerve' } },
   { label: 'Femoral nerve', patch: { nerve: 'Femoral nerve' } },
-  { label: 'Superior gluteal nerve', patch: { nerve: 'Superior gluteal nerve' } },
+  { label: 'C5 root', patch: { root: 'C5' } },
   { label: 'L5 root', patch: { root: 'L5' } },
-  { label: 'S1 root', patch: { root: 'S1' } },
 ];
 
 export function Welcome({ onFilter }: { onFilter: (patch: Partial<Filters>) => void }) {

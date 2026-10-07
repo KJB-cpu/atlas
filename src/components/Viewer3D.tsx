@@ -8,7 +8,16 @@ interface Props {
   onSelect: (id: string | null) => void;
 }
 
-const MODEL_URL = `${import.meta.env.BASE_URL}models/lower.glb`;
+const MODELS = {
+  upper: `${import.meta.env.BASE_URL}models/upper.glb`,
+  lower: `${import.meta.env.BASE_URL}models/lower.glb`,
+};
+
+const REGION_BUTTONS: { id: keyof typeof MODELS | null; label: string; title: string }[] = [
+  { id: 'upper', label: 'UE', title: 'Upper extremity 보기' },
+  { id: 'lower', label: 'LE', title: 'Lower extremity 보기' },
+  { id: null, label: '⤢', title: '전체 보기' },
+];
 
 type Toggles = Omit<DisplayState, 'selectedId' | 'highlightIds'>;
 
@@ -45,7 +54,7 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
     v.onPick = (p) => {
       if (p?.kind === 'muscles') onSelectRef.current(p.name);
     };
-    v.load(MODEL_URL).then(
+    v.load(MODELS).then(
       () => setStatus('ready'),
       (e) => {
         console.error(e);
@@ -80,9 +89,13 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
               {v.label}
             </button>
           ))}
-          <button onClick={() => viewerRef.current?.resetView()} title="전체 보기">
-            ⤢
-          </button>
+        </div>
+        <div className="seg" role="group" aria-label="Region">
+          {REGION_BUTTONS.map((r) => (
+            <button key={r.label} onClick={() => viewerRef.current?.frameRegion(r.id)} title={r.title}>
+              {r.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -115,7 +128,7 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
         <div className="viewer-msg small">이 근육은 아직 3D 모델이 없습니다.</div>
       )}
       <p className="viewer-credit">
-        3D: BodyParts3D © DBCLS, CC BY-SA 2.1 JP · 오른쪽 하지
+        3D: BodyParts3D © DBCLS, CC BY-SA 2.1 JP · 오른쪽 상·하지
       </p>
     </div>
   );

@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "validate": "tsx scripts/validate-data.ts",
-    "models:build": "python3 tools/build_models.py tools/parts-lower.json && gltf-transform meshopt tools/.cache/lower.raw.glb public/models/lower.glb"
+    "models:build": "npm run models:build:lower && npm run models:build:upper",
+    "models:build:lower": "python3 tools/build_models.py tools/parts-lower.json && gltf-transform meshopt tools/.cache/lower.raw.glb public/models/lower.glb",
+    "models:build:upper": "python3 tools/build_models.py tools/parts-upper.json && gltf-transform meshopt tools/.cache/upper.raw.glb public/models/upper.glb"
   },
   "dependencies": {
     "react": "^19.3.0",
