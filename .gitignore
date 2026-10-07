@@ -4,3 +4,4 @@ dist
 .DS_Store
 # 3D 변환 파이프라인 작업 디렉터리 (원본 STL 캐시)
 tools/.cache
+*.tsbuildinfo

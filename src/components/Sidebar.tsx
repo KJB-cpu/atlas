@@ -11,9 +11,11 @@ interface Props {
   results: Muscle[];
   selectedId: string | null;
   onSelect: (id: string | null) => void;
+  show3D: boolean;
+  onToggle3D: () => void;
 }
 
-export function Sidebar({ filters, onFilters, results, selectedId, onSelect }: Props) {
+export function Sidebar({ filters, onFilters, results, selectedId, onSelect, show3D, onToggle3D }: Props) {
   const searchRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const facets = useMemo(() => facetOptions(MUSCLES, filters), [filters]);
@@ -72,6 +74,9 @@ export function Sidebar({ filters, onFilters, results, selectedId, onSelect }: P
           Atlas
         </button>
         <span className="brand-sub">{MUSCLES.length} muscles</span>
+        <button className="toggle-3d" aria-pressed={show3D} onClick={onToggle3D} title="3D 뷰어 표시/숨김">
+          3D
+        </button>
       </header>
 
       <div className="search">
