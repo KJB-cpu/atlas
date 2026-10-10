@@ -25,7 +25,9 @@ export type JointId =
   | 'trunk'
   | 'ribs'
   | 'tmj'
-  | 'head';
+  | 'head'
+  | 'hyoid'
+  | 'face';
 
 export interface Action {
   joint: JointId;

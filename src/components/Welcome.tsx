@@ -3,6 +3,8 @@ import { REGIONS } from '../data/vocab';
 import type { Filters } from '../lib/search';
 
 const QUICK: { label: string; patch: Partial<Filters> }[] = [
+  { label: 'Cervical rotation', patch: { joint: 'cervical', motion: 'rotation' } },
+  { label: 'Mouth opening', patch: { joint: 'tmj', motion: 'depression' } },
   { label: 'Scapular upward rotation', patch: { joint: 'scapula', motion: 'upward rotation' } },
   { label: 'Shoulder lateral rotation', patch: { joint: 'shoulder', motion: 'lateral rotation' } },
   { label: 'Forearm supination', patch: { joint: 'forearm', motion: 'supination' } },
@@ -16,6 +18,7 @@ const QUICK: { label: string; patch: Partial<Filters> }[] = [
   { label: 'Ulnar nerve', patch: { nerve: 'Ulnar nerve' } },
   { label: 'Femoral nerve', patch: { nerve: 'Femoral nerve' } },
   { label: 'Phrenic nerve', patch: { nerve: 'Phrenic nerve' } },
+  { label: 'CN VII', patch: { root: 'CN VII' } },
   { label: 'C5 root', patch: { root: 'C5' } },
   { label: 'L5 root', patch: { root: 'L5' } },
 ];

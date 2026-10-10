@@ -1,0 +1,214 @@
+{
+  "_comment": "BodyParts3D FMA ID 매핑 (head & neck, right side 근육 + 두개골). occipital bone·경추는 upper 모델에 있음.",
+  "name": "headneck",
+  "muscles": {
+    "sternocleidomastoid": [
+      "FMA13408"
+    ],
+    "scalenus-anterior": [
+      "FMA13392"
+    ],
+    "scalenus-medius": [
+      "FMA13390"
+    ],
+    "scalenus-posterior": [
+      "FMA13388"
+    ],
+    "platysma": [
+      "FMA45739"
+    ],
+    "longus-colli": [
+      "FMA46283",
+      "FMA46285",
+      "FMA46287"
+    ],
+    "longus-capitis": [
+      "FMA46309"
+    ],
+    "rectus-capitis-anterior": [
+      "FMA46313"
+    ],
+    "rectus-capitis-lateralis": [
+      "FMA46317"
+    ],
+    "digastric": [
+      "FMA46304",
+      "FMA46306"
+    ],
+    "mylohyoid": [
+      "FMA46321"
+    ],
+    "geniohyoid": [
+      "FMA46326"
+    ],
+    "stylohyoid": [
+      "FMA45826"
+    ],
+    "sternohyoid": [
+      "FMA13346"
+    ],
+    "omohyoid": [
+      "FMA13348"
+    ],
+    "sternothyroid": [
+      "FMA13350"
+    ],
+    "thyrohyoid": [
+      "FMA13352"
+    ],
+    "splenius-capitis": [
+      "FMA22728"
+    ],
+    "splenius-cervicis": [
+      "FMA22726"
+    ],
+    "semispinalis-capitis": [
+      "FMA22876"
+    ],
+    "semispinalis-cervicis": [
+      "FMA22874"
+    ],
+    "longissimus-capitis": [
+      "FMA22754"
+    ],
+    "longissimus-cervicis": [
+      "FMA22757"
+    ],
+    "iliocostalis-cervicis": [
+      "FMA22744"
+    ],
+    "spinalis-cervicis": [
+      "FMA22781"
+    ],
+    "rectus-capitis-posterior-major": [
+      "FMA32530"
+    ],
+    "rectus-capitis-posterior-minor": [
+      "FMA32532"
+    ],
+    "obliquus-capitis-superior": [
+      "FMA32534"
+    ],
+    "obliquus-capitis-inferior": [
+      "FMA32536"
+    ],
+    "masseter": [
+      "FMA49001",
+      "FMA49004"
+    ],
+    "temporalis": [
+      "FMA49007"
+    ],
+    "medial-pterygoid": [
+      "FMA49012"
+    ],
+    "lateral-pterygoid": [
+      "FMA49022",
+      "FMA49024"
+    ],
+    "occipitofrontalis": [
+      "FMA46759",
+      "FMA46761"
+    ],
+    "orbicularis-oculi": [
+      "FMA46782",
+      "FMA46785"
+    ],
+    "corrugator-supercilii": [
+      "FMA46796"
+    ],
+    "procerus": [
+      "FMA55610"
+    ],
+    "nasalis": [
+      "FMA55606"
+    ],
+    "orbicularis-oris": [
+      "FMA46841"
+    ],
+    "zygomaticus-major": [
+      "FMA46812"
+    ],
+    "zygomaticus-minor": [
+      "FMA46814"
+    ],
+    "levator-labii-superioris": [
+      "FMA46806"
+    ],
+    "levator-anguli-oris": [
+      "FMA46823"
+    ],
+    "risorius": [
+      "FMA46839"
+    ],
+    "buccinator": [
+      "FMA46835"
+    ],
+    "depressor-anguli-oris": [
+      "FMA46829"
+    ],
+    "depressor-labii-inferioris": [
+      "FMA46817"
+    ],
+    "mentalis": [
+      "FMA46826"
+    ]
+  },
+  "bones": {
+    "Frontal bone": [
+      "FMA52734"
+    ],
+    "Sphenoid": [
+      "FMA52736"
+    ],
+    "Ethmoid": [
+      "FMA52740"
+    ],
+    "Vomer": [
+      "FMA9710"
+    ],
+    "Temporal bones": [
+      "FMA52738",
+      "FMA52739"
+    ],
+    "Parietal bones": [
+      "FMA52788",
+      "FMA52789"
+    ],
+    "Zygomatic bones": [
+      "FMA52892",
+      "FMA52893"
+    ],
+    "Maxillae": [
+      "FMA53649",
+      "FMA53650"
+    ],
+    "Nasal bones": [
+      "FMA53647",
+      "FMA53648"
+    ],
+    "Lacrimal bones": [
+      "FMA53645",
+      "FMA53646"
+    ],
+    "Palatine bones": [
+      "FMA53655",
+      "FMA53656"
+    ],
+    "Inferior nasal conchae": [
+      "FMA54737",
+      "FMA54738"
+    ],
+    "Mandible": [
+      "FMA52748"
+    ],
+    "Hyoid": [
+      "FMA52749"
+    ]
+  },
+  "connective": {
+    "Thyroid cartilage": [
+      "FMA55099"
+    ]
+  }
+}

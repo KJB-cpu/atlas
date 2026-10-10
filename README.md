@@ -39,12 +39,13 @@ npm run build      # dist/ 정적 빌드
 
 ## 3D 모델
 
+- `public/models/headneck.glb` — 두개골 + 오른쪽 목·저작·표정근 (근육 48)
 - `public/models/upper.glb` — 오른쪽 상지 + 경추·흉추·늑골·흉골·occipital bone (근육 54)
 - `public/models/trunk.glb` — 체간 근육 24 (erector spinae, transversospinalis, abdominal wall, QL, diaphragm, intercostals, pelvic floor) + 왼쪽 늑골·골반
 - `public/models/lower.glb` — 오른쪽 하지 + 골반 + 요추 (근육 51, IT tract·Achilles tendon)
-- 두 모델은 같은 좌표계라 한 장면에 함께 로드됨 (UE / Trunk / LE 버튼으로 부위 프레이밍)
+- 두 모델은 같은 좌표계라 한 장면에 함께 로드됨 (H&N / UE / Trunk / LE 버튼으로 부위 프레이밍)
 - `tools/parts-<region>.json` — 근육 id ↔ BodyParts3D FMA ID 매핑
-- 다시 만들기: `pip install trimesh fast-simplification` 후 `npm run models:build` (부위별: `models:build:upper`, `models:build:trunk`, `models:build:lower`)
+- 다시 만들기: `pip install trimesh fast-simplification` 후 `npm run models:build` (부위별: `models:build:headneck`, `models:build:upper`, `models:build:trunk`, `models:build:lower`)
   (STL 원본은 `tools/.cache`에 캐시, git에는 압축된 GLB만 포함)
 - 뷰어 조작: 드래그 회전 · 우클릭 드래그 이동 · 휠 확대 / 근육 클릭 시 선택
 - 모드: X-ray(근육 반투명), Isolate(선택 근육 + 뼈만)

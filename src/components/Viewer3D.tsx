@@ -11,12 +11,14 @@ interface Props {
 const MODEL_EXT = import.meta.env.VITE_TARGET === 'artifact' ? 'glb.json' : 'glb';
 const modelUrl = (name: string) => `${import.meta.env.BASE_URL}models/${name}.${MODEL_EXT}`;
 const MODELS = {
+  headneck: modelUrl('headneck'),
   upper: modelUrl('upper'),
   trunk: modelUrl('trunk'),
   lower: modelUrl('lower'),
 };
 
 const REGION_BUTTONS: { id: keyof typeof MODELS | null; label: string; title: string }[] = [
+  { id: 'headneck', label: 'H&N', title: 'Head & Neck 보기' },
   { id: 'upper', label: 'UE', title: 'Upper extremity 보기' },
   { id: 'trunk', label: 'Trunk', title: 'Spine & Trunk 보기' },
   { id: 'lower', label: 'LE', title: 'Lower extremity 보기' },
@@ -132,7 +134,7 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
         <div className="viewer-msg small">이 근육은 아직 3D 모델이 없습니다.</div>
       )}
       <p className="viewer-credit">
-        3D: BodyParts3D © DBCLS, CC BY-SA 2.1 JP · 오른쪽 상·하지, 체간
+        3D: BodyParts3D © DBCLS, CC BY-SA 2.1 JP · 오른쪽 근육 + 전신 골격
       </p>
     </div>
   );

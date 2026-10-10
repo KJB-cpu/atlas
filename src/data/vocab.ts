@@ -25,8 +25,10 @@ export const JOINT_LABELS: Record<JointId, string> = {
   cervical: 'Cervical spine',
   trunk: 'Trunk (thoracolumbar)',
   ribs: 'Ribs / respiration',
-  tmj: 'TMJ',
-  head: 'Head',
+  tmj: 'TMJ (mandible)',
+  head: 'Head (craniocervical)',
+  hyoid: 'Hyoid / swallowing',
+  face: 'Facial expression',
 };
 
 /** 필터 표시 순서 */
