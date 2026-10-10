@@ -57,6 +57,9 @@ export function Welcome({ onFilter }: { onFilter: (patch: Partial<Filters>) => v
         <li><kbd>↑</kbd> <kbd>↓</kbd> 목록 이동</li>
         <li><kbd>Enter</kbd> 첫 결과 열기</li>
         <li><kbd>Esc</kbd> 검색어 지우기</li>
+        <li>3D <kbd>우클릭</kbd> 숨기기</li>
+        <li>3D <kbd>Alt</kbd>+클릭 흐리게</li>
+        <li><kbd>H</kbd> / <kbd>F</kbd> 선택 근육 숨기기 / 흐리게</li>
       </ul>
     </div>
   );

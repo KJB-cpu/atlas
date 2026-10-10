@@ -48,5 +48,7 @@ npm run build      # dist/ 정적 빌드
 - 다시 만들기: `pip install trimesh fast-simplification` 후 `npm run models:build` (부위별: `models:build:headneck`, `models:build:upper`, `models:build:trunk`, `models:build:lower`)
   (STL 원본은 `tools/.cache`에 캐시, git에는 압축된 GLB만 포함)
 - 뷰어 조작: 드래그 회전 · 우클릭 드래그 이동 · 휠 확대 / 근육 클릭 시 선택
-- 모드: X-ray(근육 반투명), Isolate(선택 근육 + 뼈만)
+- 모드: X-ray(근육 반투명), Focus(선택 시 나머지 반투명), Isolate(선택 근육 + 뼈만)
+- 숨기기/흐리게: 3D 우클릭 = 숨기기, Alt+클릭 = 흐리게, 선택 후 H / F 또는 Hide / Fade 버튼.
+  숨김·흐림 목록에서 개별/전체 복원. 상태는 브라우저에 저장됨
 - 라이선스: BodyParts3D © DBCLS, CC BY-SA 2.1 JP (`public/models/LICENSE.txt`)

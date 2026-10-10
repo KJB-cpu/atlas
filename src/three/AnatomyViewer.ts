@@ -28,7 +28,14 @@ export interface DisplayState {
   showConnective: boolean;
   xray: boolean;
   isolate: boolean;
+  /** 선택 시 나머지 근육을 반투명하게 (deep muscle이 가려지지 않게) */
+  focus: boolean;
+  /** 사용자가 숨긴/흐리게 한 파트. key = `${kind}:${name}` */
+  hidden: Set<string>;
+  faded: Set<string>;
 }
+
+export type PartAction = 'hide' | 'fade';
 
 const MUSCLE = new THREE.Color('#b9543e');
 const BONE = new THREE.Color('#e8dfcc');
@@ -75,6 +82,8 @@ export class AnatomyViewer {
   readonly parts = new Map<string, Part>();
   onHover: (part: Part | null, x: number, y: number) => void = () => {};
   onPick: (part: Part | null) => void = () => {};
+  /** 3D에서 우클릭 = hide, Alt(Option)+클릭 = fade */
+  onPartAction: (part: Part, action: PartAction) => void = () => {};
 
   private renderer: THREE.WebGLRenderer;
   private scene = new THREE.Scene();
@@ -114,14 +123,21 @@ export class AnatomyViewer {
     this.controls.addEventListener('change', () => this.requestRender());
 
     const el = this.renderer.domElement;
-    let down: { x: number; y: number } | null = null;
+    let down: { x: number; y: number; button: number } | null = null;
     el.addEventListener('pointermove', (e) => this.handleMove(e));
     el.addEventListener('pointerleave', () => this.setHovered(null, 0, 0));
-    el.addEventListener('pointerdown', (e) => (down = { x: e.clientX, y: e.clientY }));
+    el.addEventListener('pointerdown', (e) => (down = { x: e.clientX, y: e.clientY, button: e.button }));
     el.addEventListener('pointerup', (e) => {
-      // 드래그(회전)와 클릭 구분
-      if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 5) {
-        this.onPick(this.pick(e));
+      // 드래그(회전/이동)와 클릭 구분
+      if (down && down.button === e.button && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 5) {
+        const part = this.pick(e);
+        if (e.button === 2) {
+          if (part) this.onPartAction(part, 'hide');
+        } else if (e.button === 0) {
+          if (e.altKey) {
+            if (part) this.onPartAction(part, 'fade');
+          } else this.onPick(part);
+        }
       }
       down = null;
     });
@@ -196,9 +212,12 @@ export class AnatomyViewer {
 
   applyState(s: DisplayState): void {
     this.state = s;
-    const dimOthers = s.selectedId || s.highlightIds;
+    // 선택한 근육을 숨기면 focus/isolate 효과도 해제 → 바깥 근육을 하나씩 걷어내는 흐름
+    const sel = s.selectedId && !s.hidden.has(`muscles:${s.selectedId}`) ? s.selectedId : null;
+    const dimOthers = (sel && (s.focus || s.isolate)) || s.highlightIds;
     for (const p of this.parts.values()) {
       const m = p.mesh.material;
+      const key = `${p.kind}:${p.name}`;
       let visible = true;
       let opacity = 1;
       let color = p.baseColor;
@@ -207,14 +226,18 @@ export class AnatomyViewer {
         visible = s.showConnective;
         if (dimOthers || s.xray) opacity = 0.25;
       } else {
-        const selected = p.name === s.selectedId;
+        const selected = p.name === sel;
         visible = s.showMuscles || selected;
         if (selected) color = SELECT;
-        else if (s.isolate && s.selectedId) opacity = 0.06;
+        else if (s.isolate && sel) opacity = 0.06;
         else if (s.highlightIds && !s.highlightIds.has(p.name)) opacity = 0.07;
+        else if (s.xray) opacity = 0.3;
         // 선택 시 나머지 근육을 반투명하게 → deep muscle도 가려지지 않음
-        else if (s.xray || s.selectedId) opacity = s.xray ? 0.3 : 0.22;
+        else if (s.focus && sel) opacity = 0.22;
       }
+      if (s.hidden.has(key)) visible = false;
+      // 흐리게 한 파트는 클릭이 통과하도록 pick 기준(0.2)보다 낮게. 선택된 근육은 위치가 보이도록 조금 진하게
+      if (s.faded.has(key)) opacity = Math.min(opacity, p.name === sel ? 0.4 : 0.12);
       p.mesh.visible = visible;
       m.color.copy(color);
       m.transparent = opacity < 1;

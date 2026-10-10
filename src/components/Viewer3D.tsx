@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AnatomyViewer, type DisplayState, type Part, type View } from '../three/AnatomyViewer';
+import { AnatomyViewer, type DisplayState, type Part, type PartAction, type View } from '../three/AnatomyViewer';
 import { MUSCLE_BY_ID } from '../data';
 
 interface Props {
@@ -25,7 +25,57 @@ const REGION_BUTTONS: { id: keyof typeof MODELS | null; label: string; title: st
   { id: null, label: '⤢', title: '전체 보기' },
 ];
 
-type Toggles = Omit<DisplayState, 'selectedId' | 'highlightIds'>;
+type Toggles = Omit<DisplayState, 'selectedId' | 'highlightIds' | 'hidden' | 'faded'>;
+
+const DEFAULT_TOGGLES: Toggles = {
+  showBones: true,
+  showMuscles: true,
+  showConnective: true,
+  xray: false,
+  isolate: false,
+  focus: true,
+};
+
+// 레이어/모드 설정과 숨김·흐림 목록은 이 브라우저에 기억 (새로고침해도 해부 진행 상태 유지)
+const STORE_KEY = 'atlas.viewer.v1';
+interface Stored {
+  toggles: Toggles;
+  hidden: string[];
+  faded: string[];
+}
+
+function loadStored(): Stored {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      const v = JSON.parse(raw) as Partial<Stored>;
+      return {
+        toggles: { ...DEFAULT_TOGGLES, ...v.toggles },
+        hidden: Array.isArray(v.hidden) ? v.hidden : [],
+        faded: Array.isArray(v.faded) ? v.faded : [],
+      };
+    }
+  } catch {
+    // 저장소를 쓸 수 없는 환경 — 기본값으로 동작
+  }
+  return { toggles: DEFAULT_TOGGLES, hidden: [], faded: [] };
+}
+
+function saveStored(v: Stored): void {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(v));
+  } catch {
+    // 무시
+  }
+}
+
+/** 'muscles:gluteus-maximus' → 'Gluteus maximus', 'bones:Scapula' → 'Scapula' */
+function keyLabel(key: string): string {
+  const i = key.indexOf(':');
+  const kind = key.slice(0, i);
+  const name = key.slice(i + 1);
+  return kind === 'muscles' ? MUSCLE_BY_ID.get(name)?.name ?? name : name;
+}
 
 const VIEWS: { id: View; label: string }[] = [
   { id: 'anterior', label: 'Ant' },
@@ -43,15 +93,49 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
   const viewerRef = useRef<AnatomyViewer | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [hover, setHover] = useState<{ label: string; kind: string; x: number; y: number } | null>(null);
-  const [toggles, setToggles] = useState<Toggles>({
-    showBones: true,
-    showMuscles: true,
-    showConnective: true,
-    xray: false,
-    isolate: false,
-  });
+  const [initial] = useState(loadStored);
+  const [toggles, setToggles] = useState<Toggles>(initial.toggles);
+  const [hidden, setHidden] = useState<Set<string>>(() => new Set(initial.hidden));
+  const [faded, setFaded] = useState<Set<string>>(() => new Set(initial.faded));
+  const [listOpen, setListOpen] = useState(false);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+
+  /** 같은 동작을 다시 하면 원래대로. hide ↔ fade는 서로 전환 */
+  const applyAction = (key: string, action: PartAction) => {
+    const [target, other, setTarget, setOther] =
+      action === 'hide' ? [hidden, faded, setHidden, setFaded] : [faded, hidden, setFaded, setHidden];
+    const nextTarget = new Set(target);
+    if (nextTarget.has(key)) nextTarget.delete(key);
+    else {
+      nextTarget.add(key);
+      if (other.has(key)) {
+        const nextOther = new Set(other);
+        nextOther.delete(key);
+        setOther(nextOther);
+      }
+    }
+    setTarget(nextTarget);
+  };
+  const restore = (key: string) => {
+    setHidden((h) => {
+      const n = new Set(h);
+      n.delete(key);
+      return n;
+    });
+    setFaded((f) => {
+      const n = new Set(f);
+      n.delete(key);
+      return n;
+    });
+  };
+  const restoreAll = () => {
+    setHidden(new Set());
+    setFaded(new Set());
+    setListOpen(false);
+  };
+  const actionRef = useRef(applyAction);
+  actionRef.current = applyAction;
 
   useEffect(() => {
     const v = new AnatomyViewer(hostRef.current!);
@@ -60,6 +144,7 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
     v.onPick = (p) => {
       if (p?.kind === 'muscles') onSelectRef.current(p.name);
     };
+    v.onPartAction = (p, action) => actionRef.current(`${p.kind}:${p.name}`, action);
     v.load(MODELS).then(
       () => setStatus('ready'),
       (e) => {
@@ -74,14 +159,39 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
   }, []);
 
   useEffect(() => {
-    viewerRef.current?.applyState({ selectedId, highlightIds, ...toggles });
-  }, [selectedId, highlightIds, toggles, status]);
+    viewerRef.current?.applyState({ selectedId, highlightIds, ...toggles, hidden, faded });
+  }, [selectedId, highlightIds, toggles, hidden, faded, status]);
+
+  useEffect(() => {
+    saveStored({ toggles, hidden: [...hidden], faded: [...faded] });
+  }, [toggles, hidden, faded]);
+
+  // H = 선택 근육 숨기기, F = 흐리게 (입력 중일 때는 무시)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!selectedId || e.metaKey || e.ctrlKey || e.altKey) return;
+      if ((e.target as HTMLElement)?.closest('input, textarea, select')) return;
+      const k = e.key.toLowerCase();
+      if (k === 'h' || k === 'f') {
+        e.preventDefault();
+        actionRef.current(`muscles:${selectedId}`, k === 'h' ? 'hide' : 'fade');
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedId]);
 
   useEffect(() => {
     if (status === 'ready') viewerRef.current?.focus(selectedId);
   }, [selectedId, status]);
 
   const hasModel = selectedId ? viewerRef.current?.parts.has(`muscles:${selectedId}`) : true;
+  const selKey = selectedId ? `muscles:${selectedId}` : null;
+  const hiddenCount = hidden.size;
+  const fadedCount = faded.size;
+  const changed = [...[...hidden].map((k) => [k, 'hide'] as const), ...[...faded].map((k) => [k, 'fade'] as const)].sort(
+    (a, b) => keyLabel(a[0]).localeCompare(keyLabel(b[0])),
+  );
   const flip = (k: keyof Toggles) => setToggles((t) => ({ ...t, [k]: !t[k] }));
 
   return (
@@ -113,6 +223,9 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
         </div>
         <div className="seg" role="group" aria-label="Mode">
           <button aria-pressed={toggles.xray} onClick={() => flip('xray')} title="근육 반투명">X-ray</button>
+          <button aria-pressed={toggles.focus} onClick={() => flip('focus')} title="선택 시 나머지 근육 반투명">
+            Focus
+          </button>
           <button
             aria-pressed={toggles.isolate}
             onClick={() => flip('isolate')}
@@ -121,15 +234,60 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
             Isolate
           </button>
         </div>
+        {selKey && hasModel && status === 'ready' && (
+          <div className="seg" role="group" aria-label="Selected muscle">
+            <button aria-pressed={hidden.has(selKey)} onClick={() => applyAction(selKey, 'hide')} title="선택 근육 숨기기 (H)">
+              Hide
+            </button>
+            <button aria-pressed={faded.has(selKey)} onClick={() => applyAction(selKey, 'fade')} title="선택 근육 흐리게 (F)">
+              Fade
+            </button>
+          </div>
+        )}
+        {changed.length > 0 && (
+          <div className="seg" role="group" aria-label="Hidden parts">
+            <button aria-expanded={listOpen} onClick={() => setListOpen((o) => !o)} title="숨김·흐림 목록">
+              {[hiddenCount && `숨김 ${hiddenCount}`, fadedCount && `흐림 ${fadedCount}`].filter(Boolean).join(' · ')} ▾
+            </button>
+            <button onClick={restoreAll} title="모두 다시 보이기">
+              모두 보이기
+            </button>
+          </div>
+        )}
+        {listOpen && changed.length > 0 && (
+          <div className="viewer-panel" role="dialog" aria-label="숨김·흐림 목록">
+            <ul>
+              {changed.map(([key, state]) => (
+                <li key={key}>
+                  <span className={`state ${state}`}>{state === 'hide' ? '숨김' : '흐림'}</span>
+                  <span className="name">{keyLabel(key)}</span>
+                  <button className="link" onClick={() => restore(key)}>
+                    보이기
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
+
 
       {hover && (
         <div className={`viewer-tip ${hover.kind}`} style={{ left: hover.x + 14, top: hover.y + 12 }}>
           {hover.label}
+          <small>우클릭 숨기기 · Alt+클릭 흐리게</small>
         </div>
       )}
       {status === 'loading' && <div className="viewer-msg">3D 모델 불러오는 중…</div>}
       {status === 'error' && <div className="viewer-msg">3D 모델을 불러오지 못했습니다.</div>}
+      {status === 'ready' && selKey && hidden.has(selKey) && (
+        <div className="viewer-notice">
+          선택한 근육이 숨김 상태입니다.
+          <button className="link" onClick={() => restore(selKey)}>
+            다시 보이기
+          </button>
+        </div>
+      )}
       {status === 'ready' && selectedId && !hasModel && (
         <div className="viewer-msg small">이 근육은 아직 3D 모델이 없습니다.</div>
       )}
