@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { acceleratedRaycast, computeBoundsTree } from 'three-mesh-bvh';
 
 THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
@@ -59,6 +58,18 @@ const VIEW_DIR: Record<View, THREE.Vector3> = {
   lateral: new THREE.Vector3(-1, 0, 0),
   medial: new THREE.Vector3(1, 0, 0),
 };
+
+/** '.glb.json'({ glb: base64 })이면 풀어서 parse, 아니면 일반 GLB 로드 */
+async function loadModel(loader: GLTFLoader, url: string) {
+  if (!url.endsWith('.json')) return loader.loadAsync(url);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+  const { glb } = (await res.json()) as { glb: string };
+  const bin = atob(glb);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return loader.parseAsync(bytes.buffer, '');
+}
 
 export class AnatomyViewer {
   readonly parts = new Map<string, Part>();
@@ -123,9 +134,14 @@ export class AnatomyViewer {
   /** 여러 부위 모델(같은 BodyParts3D 좌표계)을 한 장면에 불러옴. key = region 이름 */
   async load(models: Record<string, string>): Promise<void> {
     const loader = new GLTFLoader();
-    loader.setMeshoptDecoder(MeshoptDecoder);
+    // 로컬 빌드는 meshopt 압축 모델(작음)을 쓰고, 온라인(Artifact) 빌드는 WebAssembly가
+    // 필요 없는 양자화 모델을 씀 — 이 경우 디코더 코드가 번들에서 빠짐
+    if (import.meta.env.VITE_TARGET !== 'artifact') {
+      const { MeshoptDecoder } = await import('three/examples/jsm/libs/meshopt_decoder.module.js');
+      loader.setMeshoptDecoder(MeshoptDecoder);
+    }
     const loaded = await Promise.all(
-      Object.entries(models).map(async ([region, url]) => [region, await loader.loadAsync(url)] as const),
+      Object.entries(models).map(async ([region, url]) => [region, await loadModel(loader, url)] as const),
     );
     if (this.disposed) return;
     for (const [region, gltf] of loaded) {

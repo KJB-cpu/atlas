@@ -12,7 +12,8 @@
     "models:build": "npm run models:build:upper && npm run models:build:trunk && npm run models:build:lower",
     "models:build:lower": "python3 tools/build_models.py tools/parts-lower.json && gltf-transform meshopt tools/.cache/lower.raw.glb public/models/lower.glb",
     "models:build:upper": "python3 tools/build_models.py tools/parts-upper.json && gltf-transform meshopt tools/.cache/upper.raw.glb public/models/upper.glb",
-    "models:build:trunk": "python3 tools/build_models.py tools/parts-trunk.json && gltf-transform meshopt tools/.cache/trunk.raw.glb public/models/trunk.glb"
+    "models:build:trunk": "python3 tools/build_models.py tools/parts-trunk.json && gltf-transform meshopt tools/.cache/trunk.raw.glb public/models/trunk.glb",
+    "build:artifact": "node scripts/build-artifact.mjs"
   },
   "dependencies": {
     "react": "^19.3.0",

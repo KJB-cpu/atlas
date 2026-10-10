@@ -8,10 +8,12 @@ interface Props {
   onSelect: (id: string | null) => void;
 }
 
+const MODEL_EXT = import.meta.env.VITE_TARGET === 'artifact' ? 'glb.json' : 'glb';
+const modelUrl = (name: string) => `${import.meta.env.BASE_URL}models/${name}.${MODEL_EXT}`;
 const MODELS = {
-  upper: `${import.meta.env.BASE_URL}models/upper.glb`,
-  trunk: `${import.meta.env.BASE_URL}models/trunk.glb`,
-  lower: `${import.meta.env.BASE_URL}models/lower.glb`,
+  upper: modelUrl('upper'),
+  trunk: modelUrl('trunk'),
+  lower: modelUrl('lower'),
 };
 
 const REGION_BUTTONS: { id: keyof typeof MODELS | null; label: string; title: string }[] = [

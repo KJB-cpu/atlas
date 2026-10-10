@@ -2,6 +2,14 @@
 
 개인용 근골격 해부학 웹앱 — 근육 DB(O/I/A/N, blood supply) + PT 임상 정보(MMT, special tests, dysfunction) + 3D 뷰어.
 
+## 온라인 링크
+
+https://claude.ai/artifact/2ZEq6ngoY266ffscEkboHJ (claude.ai Artifact, 비공개 — 본인 계정으로 로그인 시 열림)
+
+- `npm run build:artifact` → `dist-artifact/` 생성 후 Artifact로 다시 게시하면 같은 링크가 갱신됨
+- 온라인 빌드는 WebAssembly 디코더 없이 양자화 모델을 쓰고, Artifact가 `.glb`를 서빙하지 않아 모델을 `.glb.json`(base64)으로 감쌈
+- My notes는 각 브라우저에 따로 저장됨 (기기 간 동기화 안 됨)
+
 ## 쉬운 실행 (더블클릭)
 
 1. [Node.js](https://nodejs.org) LTS 버전 설치 (한 번만)
