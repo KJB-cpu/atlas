@@ -2,7 +2,17 @@
 
 개인용 근골격 해부학 웹앱 — 근육 DB(O/I/A/N, blood supply) + PT 임상 정보(MMT, special tests, dysfunction) + 3D 뷰어.
 
-## 실행
+## 쉬운 실행 (더블클릭)
+
+1. [Node.js](https://nodejs.org) LTS 버전 설치 (한 번만)
+2. 이 폴더에서 더블클릭
+   - macOS: `start-mac.command` (처음엔 우클릭 → 열기)
+   - Windows: `start-windows.bat`
+3. 브라우저가 자동으로 열림 (http://localhost:5173). 종료는 터미널 창 닫기
+
+처음 실행 때만 필요한 파일을 설치하느라 1~2분 걸립니다.
+
+## 실행 (터미널)
 
 ```bash
 npm install
