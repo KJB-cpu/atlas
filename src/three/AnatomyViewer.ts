@@ -107,6 +107,9 @@ export class AnatomyViewer {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(this.renderer.domElement);
+    // 클릭하면 포커스를 받아 방향키(이동)·+/−(확대) 사용 가능
+    this.renderer.domElement.tabIndex = 0;
+    this.renderer.domElement.setAttribute('aria-label', '3D 해부 모델 — 드래그 회전, Shift+드래그 이동, 방향키 이동, +/− 확대');
 
     this.scene.add(new THREE.HemisphereLight('#ffffff', '#5a5048', 1.6));
     const key = new THREE.DirectionalLight('#ffffff', 1.6);
@@ -125,6 +128,21 @@ export class AnatomyViewer {
     const el = this.renderer.domElement;
     let down: { x: number; y: number; button: number } | null = null;
     el.addEventListener('pointermove', (e) => this.handleMove(e));
+    el.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 0.15 : 0.06;
+      const moves: Record<string, [number, number]> = {
+        ArrowLeft: [-step, 0],
+        ArrowRight: [step, 0],
+        ArrowUp: [0, step],
+        ArrowDown: [0, -step],
+      };
+      // 화살표 방향으로 모델이 움직임 (드래그와 같은 감각)
+      if (moves[e.key]) this.pan(...moves[e.key]);
+      else if (e.key === '+' || e.key === '=') this.zoom(0.85);
+      else if (e.key === '-' || e.key === '_') this.zoom(1 / 0.85);
+      else return;
+      e.preventDefault();
+    });
     el.addEventListener('pointerleave', () => this.setHovered(null, 0, 0));
     el.addEventListener('pointerdown', (e) => (down = { x: e.clientX, y: e.clientY, button: e.button }));
     el.addEventListener('pointerup', (e) => {
@@ -260,6 +278,32 @@ export class AnatomyViewer {
       : this.distanceForSize(this.modelSize);
     const dir = this.camera.position.clone().sub(this.controls.target).normalize();
     this.animateTo(target, target.clone().addScaledVector(dir, dist));
+  }
+
+  /**
+   * 화면 기준 평행 이동(pan). dx·dy는 현재 보이는 화면 높이에 대한 비율.
+   * 모델이 (+dx = 오른쪽, +dy = 위)로 움직여 보이도록 카메라와 회전 중심을 반대로 옮김
+   * — Shift+드래그 방향과 같음.
+   */
+  pan(dx: number, dy: number): void {
+    this.anim = null;
+    const dist = this.camera.position.distanceTo(this.controls.target);
+    const viewH = 2 * dist * Math.tan((this.camera.fov * Math.PI) / 360);
+    const right = new THREE.Vector3().setFromMatrixColumn(this.camera.matrix, 0);
+    const up = new THREE.Vector3().setFromMatrixColumn(this.camera.matrix, 1);
+    const offset = right.multiplyScalar(-dx * viewH).addScaledVector(up, -dy * viewH);
+    this.camera.position.add(offset);
+    this.controls.target.add(offset);
+    this.requestRender();
+  }
+
+  /** factor < 1 이면 확대(가까이), > 1 이면 축소 */
+  zoom(factor: number): void {
+    this.anim = null;
+    const offset = this.camera.position.clone().sub(this.controls.target);
+    const len = THREE.MathUtils.clamp(offset.length() * factor, this.controls.minDistance, this.controls.maxDistance);
+    this.camera.position.copy(this.controls.target).addScaledVector(offset.normalize(), len);
+    this.requestRender();
   }
 
   setView(view: View): void {

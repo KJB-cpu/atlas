@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AnatomyViewer, type DisplayState, type Part, type PartAction, type View } from '../three/AnatomyViewer';
 import { MUSCLE_BY_ID } from '../data';
 
@@ -83,6 +83,46 @@ const VIEWS: { id: View; label: string }[] = [
   { id: 'lateral', label: 'Lat' },
   { id: 'medial', label: 'Med' },
 ];
+
+/** 누르고 있으면 계속 반복되는 버튼 (이동·확대 패드) */
+function HoldButton({ onStep, label, className, children }: {
+  onStep: () => void;
+  label: string;
+  className: string;
+  children: ReactNode;
+}) {
+  const timer = useRef<number | undefined>(undefined);
+  const stop = () => {
+    window.clearInterval(timer.current);
+    timer.current = undefined;
+  };
+  useEffect(() => stop, []);
+  return (
+    <button
+      type="button"
+      className={className}
+      aria-label={label}
+      title={label}
+      onPointerDown={(e) => {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        onStep();
+        stop();
+        timer.current = window.setInterval(onStep, 60);
+      }}
+      onPointerUp={stop}
+      onPointerCancel={stop}
+      onLostPointerCapture={stop}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onStep();
+        }
+      }}
+    >
+      {children}
+    </button>
+  );
+}
 
 function partLabel(p: Part): string {
   return p.kind === 'muscles' ? MUSCLE_BY_ID.get(p.name)?.name ?? p.name : p.name;
@@ -272,10 +312,19 @@ export function Viewer3D({ selectedId, highlightIds, onSelect }: Props) {
       </div>
 
 
+      <div className="viewer-nav" role="group" aria-label="화면 이동·확대">
+        <HoldButton className="up" label="모델 위로" onStep={() => viewerRef.current?.pan(0, 0.04)}>▲</HoldButton>
+        <HoldButton className="left" label="모델 왼쪽으로" onStep={() => viewerRef.current?.pan(-0.04, 0)}>◀</HoldButton>
+        <HoldButton className="right" label="모델 오른쪽으로" onStep={() => viewerRef.current?.pan(0.04, 0)}>▶</HoldButton>
+        <HoldButton className="down" label="모델 아래로" onStep={() => viewerRef.current?.pan(0, -0.04)}>▼</HoldButton>
+        <HoldButton className="zin" label="확대" onStep={() => viewerRef.current?.zoom(0.92)}>+</HoldButton>
+        <HoldButton className="zout" label="축소" onStep={() => viewerRef.current?.zoom(1 / 0.92)}>−</HoldButton>
+      </div>
+
       {hover && (
         <div className={`viewer-tip ${hover.kind}`} style={{ left: hover.x + 14, top: hover.y + 12 }}>
           {hover.label}
-          <small>우클릭 숨기기 · Alt+클릭 흐리게</small>
+          <small>우클릭 숨기기 · Alt+클릭 흐리게 · Shift+드래그 이동</small>
         </div>
       )}
       {status === 'loading' && <div className="viewer-msg">3D 모델 불러오는 중…</div>}

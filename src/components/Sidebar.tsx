@@ -28,6 +28,8 @@ export function Sidebar({ filters, onFilters, results, selectedId, onSelect, sho
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const typing = (e.target as HTMLElement)?.closest('input, textarea, select');
+      // 3D 뷰어에 포커스가 있으면 방향키는 화면 이동용
+      if ((e.target as HTMLElement)?.closest('.viewer')) return;
       if (e.key === '/' && !typing) {
         e.preventDefault();
         searchRef.current?.focus();

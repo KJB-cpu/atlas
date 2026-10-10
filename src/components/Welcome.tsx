@@ -60,6 +60,8 @@ export function Welcome({ onFilter }: { onFilter: (patch: Partial<Filters>) => v
         <li>3D <kbd>우클릭</kbd> 숨기기</li>
         <li>3D <kbd>Alt</kbd>+클릭 흐리게</li>
         <li><kbd>H</kbd> / <kbd>F</kbd> 선택 근육 숨기기 / 흐리게</li>
+        <li>3D <kbd>Shift</kbd>+드래그 이동</li>
+        <li>3D 클릭 후 <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> 이동 · <kbd>+</kbd><kbd>−</kbd> 확대</li>
       </ul>
     </div>
   );

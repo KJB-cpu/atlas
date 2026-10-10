@@ -256,6 +256,44 @@ li + li { margin-top: 3px; }
 .seg button:hover { background: var(--surface-2); color: var(--text); }
 .seg button[aria-pressed='true'] { background: var(--accent-soft); color: var(--accent-text); font-weight: 600; }
 .seg button[aria-pressed='false'] { color: var(--text-3); }
+.viewer-nav {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  grid-template-columns: repeat(3, 30px);
+  grid-template-areas:
+    '.    up    .'
+    'left .     right'
+    '.    down  .'
+    '.    .     .'
+    '.    zin   .'
+    '.    zout  .';
+  grid-template-rows: repeat(3, 30px) 8px repeat(2, 30px);
+  gap: 2px;
+}
+.viewer-nav button {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+  border-radius: 7px;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  touch-action: none;
+  user-select: none;
+  box-shadow: 0 1px 2px var(--shadow);
+}
+.viewer-nav button:hover { color: var(--accent-text); border-color: var(--accent); }
+.viewer-nav button:active { background: var(--accent-soft); }
+.viewer-nav .up { grid-area: up; }
+.viewer-nav .down { grid-area: down; }
+.viewer-nav .left { grid-area: left; }
+.viewer-nav .right { grid-area: right; }
+.viewer-nav .zin { grid-area: zin; font-size: 17px; }
+.viewer-nav .zout { grid-area: zout; font-size: 17px; }
+.viewer-canvas canvas:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .viewer-tip {
   position: absolute;
   pointer-events: none;
