@@ -1,0 +1,127 @@
+{
+  "_comment": "BodyParts3D FMA ID 매핑 (trunk). 체간 골격 중 오른쪽·정중은 upper/lower 모델에 있고 여기엔 왼쪽만 추가. psoas-minor는 모델 없음.",
+  "name": "trunk",
+  "muscles": {
+    "iliocostalis-lumborum": [
+      "FMA22740"
+    ],
+    "iliocostalis-thoracis": [
+      "FMA22742"
+    ],
+    "longissimus-thoracis": [
+      "FMA22751"
+    ],
+    "spinalis-thoracis": [
+      "FMA22779"
+    ],
+    "semispinalis-thoracis": [
+      "FMA22872"
+    ],
+    "multifidus": [
+      "FMA22878"
+    ],
+    "rotatores": [
+      "FMA23083",
+      "FMA23089"
+    ],
+    "interspinales": [
+      "FMA71307",
+      "FMA71308",
+      "FMA71309"
+    ],
+    "intertransversarii": [
+      "FMA71444",
+      "FMA76775",
+      "FMA71442",
+      "FMA71443"
+    ],
+    "levatores-costarum": [
+      "FMA74075",
+      "FMA74077"
+    ],
+    "serratus-posterior-superior": [
+      "FMA13403"
+    ],
+    "serratus-posterior-inferior": [
+      "FMA13405"
+    ],
+    "quadratus-lumborum": [
+      "FMA22348"
+    ],
+    "rectus-abdominis": [
+      "FMA13377"
+    ],
+    "external-oblique": [
+      "FMA13336"
+    ],
+    "internal-oblique": [
+      "FMA13892"
+    ],
+    "transversus-abdominis": [
+      "FMA22344"
+    ],
+    "pyramidalis": [
+      "FMA22346"
+    ],
+    "diaphragm": [
+      "FMA13295"
+    ],
+    "external-intercostals": [
+      "FMA9756"
+    ],
+    "internal-intercostals": [
+      "FMA9757"
+    ],
+    "transversus-thoracis": [
+      "FMA9761"
+    ],
+    "levator-ani": [
+      "FMA45854",
+      "FMA45856",
+      "FMA45858"
+    ],
+    "coccygeus": [
+      "FMA46443"
+    ]
+  },
+  "bones": {
+    "Left ribs": [
+      "FMA7987",
+      "FMA8012",
+      "FMA8039",
+      "FMA8148",
+      "FMA8093",
+      "FMA8202",
+      "FMA8256",
+      "FMA8310",
+      "FMA8391",
+      "FMA8472",
+      "FMA8532",
+      "FMA8534"
+    ],
+    "Left costal cartilages": [
+      "FMA8005",
+      "FMA8031",
+      "FMA8058",
+      "FMA8167",
+      "FMA8112",
+      "FMA8221",
+      "FMA8275",
+      "BP24"
+    ],
+    "Left hip bone": [
+      "FMA16587"
+    ]
+  },
+  "connective": {
+    "Linea alba": [
+      "FMA11336"
+    ],
+    "Inguinal ligament": [
+      "FMA21964"
+    ],
+    "Tendinous arch of levator ani": [
+      "FMA46442"
+    ]
+  }
+}

@@ -329,6 +329,8 @@ li + li { margin-top: 3px; }
   font-variant-numeric: tabular-nums;
 }
 .root:hover { background: var(--accent); color: #fff; }
+.root.range { background: transparent; box-shadow: inset 0 0 0 1px var(--accent-soft); cursor: help; }
+.root.range:hover { background: transparent; color: var(--accent-text); }
 
 .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .link-list { display: flex; flex-wrap: wrap; gap: 6px; }

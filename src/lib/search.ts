@@ -1,5 +1,5 @@
 import type { JointId, Muscle, RegionId } from '../types';
-import { rootRank } from '../data/vocab';
+import { expandRoot, rootRank } from '../data/vocab';
 
 export interface Filters {
   query: string;
@@ -76,7 +76,7 @@ export function applyFilters(muscles: Muscle[], f: Filters): Muscle[] {
       if (!hit) continue;
     }
     if (f.nerve && !m.innervation.some((n) => baseNerve(n.nerve) === f.nerve)) continue;
-    if (f.root && !m.innervation.some((n) => n.roots.includes(f.root!))) continue;
+    if (f.root && !m.innervation.some((n) => n.roots.flatMap(expandRoot).includes(f.root!))) continue;
     const s = score(m, tokens);
     if (s > 0) scored.push({ m, s });
   }
@@ -98,7 +98,7 @@ export function facetOptions(muscles: Muscle[], f: Filters) {
     }
     for (const n of m.innervation) {
       nerves.add(baseNerve(n.nerve));
-      n.roots.forEach((r) => roots.add(r));
+      n.roots.flatMap(expandRoot).forEach((r) => roots.add(r));
     }
   }
   return {

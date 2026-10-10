@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { Muscle } from '../types';
 import { MUSCLE_BY_ID } from '../data';
-import { JOINT_LABELS, REGIONS } from '../data/vocab';
+import { isRootRange, JOINT_LABELS, REGIONS } from '../data/vocab';
 import { baseNerve, type Filters } from '../lib/search';
 import { NotesBox } from './NotesBox';
 
@@ -99,11 +99,17 @@ export function MuscleDetail({ muscle: m, onSelect, onFilter }: Props) {
                 {n.nerve}
               </button>
               <span className="roots">
-                {n.roots.map((r) => (
-                  <button key={r} className="root" title={`${r} 근육 보기`} onClick={() => onFilter({ root: r })}>
-                    {r}
-                  </button>
-                ))}
+                {n.roots.map((r) =>
+                  isRootRange(r) ? (
+                    <span key={r} className="root range" title="분절 지배 (segmental) — 범위는 근사치">
+                      {r}
+                    </span>
+                  ) : (
+                    <button key={r} className="root" title={`${r} 근육 보기`} onClick={() => onFilter({ root: r })}>
+                      {r}
+                    </button>
+                  ),
+                )}
               </span>
               {n.note && <span className="note">{n.note}</span>}
             </div>

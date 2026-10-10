@@ -38,10 +38,26 @@ export const ROOT_ORDER = [
   'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8',
   'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12',
   'L1', 'L2', 'L3', 'L4', 'L5',
-  'S1', 'S2', 'S3', 'S4',
+  'S1', 'S2', 'S3', 'S4', 'S5',
 ];
 
+/**
+ * 'T7–T12' 같은 분절 범위 표기를 개별 root로 펼침. 단일 root는 그대로.
+ * (trunk 근육처럼 여러 분절의 rami가 지배하는 경우 범위로 기록)
+ */
+export function expandRoot(root: string): string[] {
+  const m = root.match(/^(\S+)[–-](\S+)$/);
+  if (!m) return [root];
+  const a = ROOT_ORDER.indexOf(m[1]);
+  const b = ROOT_ORDER.indexOf(m[2]);
+  return a === -1 || b === -1 || b < a ? [root] : ROOT_ORDER.slice(a, b + 1);
+}
+
+export function isRootRange(root: string): boolean {
+  return expandRoot(root).length > 1;
+}
+
 export function rootRank(root: string): number {
-  const i = ROOT_ORDER.indexOf(root);
+  const i = ROOT_ORDER.indexOf(expandRoot(root)[0]);
   return i === -1 ? 999 : i;
 }
